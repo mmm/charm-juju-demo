@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -eu
+
 install_juju() {
   apt-add-repository ppa:juju/pkgs
   apt-get update
@@ -19,7 +21,18 @@ environments:
     default-series: oneiric
 EOF
   chown -Rf ubuntu.ubuntu /home/ubuntu/.juju
+}
+configure_juju_local_provider
+
+generate_ssh_keys() {
   su -l ubuntu -c "ssh-keygen -q -N '' -t rsa -b 2048 -f /home/ubuntu/.ssh/id_rsa"
 }
-configure_juju_local_provider #sudo -su ubuntu configure_juju_local_provider
+[ -f /home/ubuntu/.ssh/id_rsa ] || generate_ssh_keys
+
+enable_ssh_passwords() {
+  sed -i 's/PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config
+  service ssh restart
+}
+enable_ssh_passwords
+
 
