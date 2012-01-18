@@ -1,0 +1,4 @@
+name: juju-demo
+summary: juju demo environment
+description: |
+Set up a local provider for demo purposes.
